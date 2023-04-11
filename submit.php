@@ -23,17 +23,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$message .= "Department: " . $department . "\n";
 	$message .= "Skills: " . $skills . "\n";
 
-	// Send email
-	$to = 'raphael277.eng.alfy@gmail.com';
-	$subject = 'php email send lab iti';
-	$headers = 'From: rafy.assaad@gmail.com' . "\r\n" .
-	    'Reply-To: rafy.assaad@gmail.com' . "\r\n" .
-	    'X-Mailer: PHP/' . phpversion();
+	// Send email using Sendinblue SMTP server
+	require_once('vendor/autoload.php');
 
-	mail($to, $subject, $message, $headers);
+	$config = array(
+		'host' => 'smtp-relay.sendinblue.com',
+		'port' => 587,
+		'username' => 'raphael277.eng.alfy@gmail.com',
+		'password' => 'RWbtwnL06KpYCrz9',
+		'protocol' => 'tls'
+	);
 
-	// Redirect to success page
-	header('Location: success.html');
-	exit();
+	$transport = new Swift_SmtpTransport($config['host'], $config['port'], $config['protocol']);
+	$transport->setUsername($config['username']);
+	$transport->setPassword($config['password']);
+
+	$mailer = new Swift_Mailer($transport);
+
+	$message = (new Swift_Message($subject))
+		->setFrom(['rafy.assaad@gmail.com' => 'Your Name'])
+		->setTo(['raphael277.eng.alfy@gmail.com' => 'Recipient Name'])
+		->setBody($message);
+
+	$result = $mailer->send($message);
+
+	if ($result) {
+		// Redirect to success page
+		header('Location: success.html');
+		exit();
+	} else {
+		echo "An error occurred while sending the email.";
+	}
 }
-?>
