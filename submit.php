@@ -1,4 +1,8 @@
 <?php
+require './PHPMailer/src/PHPMailer.php';
+require './PHPMailer/src/SMTP.php';
+require './PHPMailer/src/Exception.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	// Get form data
 	$firstName = $_POST['firstName'];
@@ -23,35 +27,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$message .= "Department: " . $department . "\n";
 	$message .= "Skills: " . $skills . "\n";
 
-	// Send email using Sendinblue SMTP server
-	require_once('vendor/autoload.php');
+	// Set SMTP credentials
+	$smtpHost = 'smtp-relay.sendinblue.com';
+	$smtpPort = 587;
+	$smtpUsername = 'raphael277.eng.alfy@gmail.com';
+	$smtpPassword = 'RWbtwnL06KpYCrz9';
 
-	$config = array(
-		'host' => 'smtp-relay.sendinblue.com',
-		'port' => 587,
-		'username' => 'raphael277.eng.alfy@gmail.com',
-		'password' => 'RWbtwnL06KpYCrz9',
-		'protocol' => 'tls'
-	);
+	// Create SMTP client
+	$smtp = new \PHPMailer\PHPMailer\SMTP();
+	$smtp->SMTPAuth = true;
+	$smtp->Host = $smtpHost;
+	$smtp->Port = $smtpPort;
+	$smtp->Username = $smtpUsername;
+	$smtp->Password = $smtpPassword;
+	$smtp->SMTPSecure = 'tls';
 
-	$transport = new Swift_SmtpTransport($config['host'], $config['port'], $config['protocol']);
-	$transport->setUsername($config['username']);
-	$transport->setPassword($config['password']);
+	// Create email message
+	$mail = new \PHPMailer\PHPMailer\PHPMailer();
+	$mail->setFrom('raphael277.eng.alfy@gmail.com');
+	$mail->addAddress('rafy.assaad@gmail.com');
+	$mail->isHTML(false);
+	$mail->Subject = 'php email send lab iti';
+	$mail->Body = $message;
 
-	$mailer = new Swift_Mailer($transport);
+	// Use SMTP client for sending email
+	$mail->isSMTP();
+	$mail->SMTPAuth = true;
+	$mail->Host = $smtpHost;
+	$mail->Port = $smtpPort;
+	$mail->Username = $smtpUsername;
+	$mail->Password = $smtpPassword;
+	$mail->SMTPSecure = 'tls';
 
-	$message = (new Swift_Message($subject))
-		->setFrom(['rafy.assaad@gmail.com' => 'Your Name'])
-		->setTo(['raphael277.eng.alfy@gmail.com' => 'Recipient Name'])
-		->setBody($message);
-
-	$result = $mailer->send($message);
-
-	if ($result) {
+	// Send email
+	if (!$mail->send()) {
+		echo 'Mailer Error: ' . $mail->ErrorInfo;
+	} else {
 		// Redirect to success page
 		header('Location: success.html');
 		exit();
-	} else {
-		echo "An error occurred while sending the email.";
 	}
 }
