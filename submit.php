@@ -1,9 +1,13 @@
 <?php
+
 require './PHPMailer/src/PHPMailer.php';
 require './PHPMailer/src/SMTP.php';
 require './PHPMailer/src/Exception.php';
+
 $errors = [];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
 	// Get form data
 	$firstName = trim($_POST['firstName']);
 	$lastName = trim($_POST['lastName']);
@@ -14,6 +18,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	$password = trim($_POST['password']);
 	$department = trim($_POST['department']);
 	$skills = isset($_POST['skills']) ? $_POST['skills'] : [];
+
+	//Add to file 
+	// Open the file in append mode
+	$file = fopen('data.txt', 'a');
+
+	// Write the form values to the file
+	fwrite($file, $firstName . "\n");
+	fwrite($file, $lastName . "\n");
+	fwrite($file, $address . "\n");
+	fwrite($file, $country . "\n");
+	fwrite($file, $gender . "\n");
+	fwrite($file, $username . "\n");
+	fwrite($file, $password . "\n");
+	fwrite($file, $department . "\n");
+
+	// Write the skills as a comma-separated list
+	if (!empty($skills)) {
+		$skillsStr = implode(',', $skills);
+		fwrite($file, $skillsStr . "\n");
+	}
+
+	// Close the file
+	fclose($file);
 
 	// Validate form data
 	if (empty($firstName)) {
