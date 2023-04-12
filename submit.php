@@ -35,7 +35,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 	// Write the skills as a comma-separated list
 	if (!empty($skills)) {
-		$skillsStr = implode(',', $skills);
+		$skillsCount = count($skills);
+		$lastSkillIndex = $skillsCount - 1;
+		$skillsStr = '';
+
+		foreach ($skills as $index => $skill) {
+			$skillsStr .= $skill;
+
+			if ($index !== $lastSkillIndex) {
+				$skillsStr .= ',';
+			}
+		}
+
 		fwrite($file, $skillsStr . "\n");
 	}
 
