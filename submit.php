@@ -103,17 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			echo $error;
 		}
 	}
-	echo '<table class="form-data">';
-	echo '<tr><td>First Name:</td><td>' . $firstName . '</td></tr>';
-	echo '<tr><td>Last Name:</td><td>' . $lastName . '</td></tr>';
-	echo '<tr><td>Address:</td><td>' . $address . '</td></tr>';
-	echo '<tr><td>Country:</td><td>' . $country . '</td></tr>';
-	echo '<tr><td>Gender:</td><td>' . $gender . '</td></tr>';
-	echo '<tr><td>Username:</td><td>' . $username . '</td></tr>';
-	echo '<tr><td>Password:</td><td>' . $password . '</td></tr>';
-	echo '<tr><td>Department:</td><td>' . $department . '</td></tr>';
-	echo '<tr><td>Skills:</td><td>' . $skills . '</td></tr>';
-	echo '</table>';
+
 	// Format email body
 	$message = "Registration Form Submission\n";
 	$message .= "First Name: " . $firstName . "\n";
